@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  
+  <meta charset="UTF-8" />
+  <title>Selamat Datang - MIAGO</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-image: url('images/Download Green color, Comic book pop art strip radial backdrop for free.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: Arial;
+      padding-top: 80px;
+      color: white;
+      text-align: center;
+    }
+    .container-box {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .judul-miago {
+      font-weight: bold;
+      color: #00ff15;
+      margin-bottom: 30px;
+    }
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+    .navbar-brand {
+      color: #00ff15;
+      font-weight: bold;
+    }
+    .nav-link.btn-login {
+      color: white !important;
+      background-color: #28a745;
+      border-radius: 6px;
+      padding: 6px 12px;
+    }
+    .nav-link.btn-login:hover {
+      background-color: #218838;
+    }
+    .menu-img {
+      height: 140px !important;
+      object-fit: cover;
+    }
+    .cart-box {
+      background-color: #fff !important;
+      color: #333 !important;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+    .btn-success {
+      background-color: #000000 !important;
+      border: none;
+    }
+    .btn-success:hover {
+      background-color: #000000 !important;
+    }
+    .modal-content {
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .card-menu .badge {
+       font-size: 0.8rem;
+       padding: 6px 10px;
+      border-radius: 6px;
+    }
+#search-input, #kategori-filter {
+  transition: all 0.3s ease;
+}
+
+#search-input:focus, #kategori-filter:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 100, 0, 0.25);
+  border-color: #ff5722;
+}
+
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="images/logoPak.png" alt="Logo MIAGO" width="60" height="60" class="d-inline-block align-text-top me-2">
+      MIAGO
+    </a>
+    <button class="btn btn-outline-light ms-3" onclick="loadMenu()">
+      <i class="bi bi-arrow-clockwise me-1"></i> Refresh Menu
+    </button>
+    
+    <div class="ms-auto">
+      <a class="nav-link btn-login text-white" href="index.php">Login</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Konten Utama -->
+<div class="container-box mt-4 pt-4">
+  <h1 class="judul-miago">MIAGO SUPER HOT & BAKSO Pak Tri</h1>
+  <p>Selamat datang di warung MIAGO SUPER HOT Pak Tri.</p>
+  <p>Silakan Pilih menu yang ingin anda pesan.</p>
+</div>
+
+<div class="container mt-4 text-dark bg-light p-3 rounded shadow">
+  <div class="row align-items-center">
+    <div class="col-md-6 mb-2">
+      <input type="text" id="search-input" class="form-control" placeholder="Cari menu..." oninput="renderFilteredMenu()" />
+    </div>
+    <div class="col-md-6 mb-2">
+      <select id="kategori-filter" class="form-select" onchange="renderFilteredMenu()">
+        <option value="Semua">Semua Kategori</option>
+        <option value="Makanan">Makanan</option>
+        <option value="Minuman">Minuman</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+
+<!-- Menu Section -->
+<div class="container menu-section">
+  <h3 class="container-box mt-5 pt-4">Menu Makanan</h3>
+  <div class="row text-dark" id="menu-makanan"></div>
+
+  <h3 class="container-box mt-5 pt-4">Menu Minuman</h3>
+  <div class="row text-dark" id="menu-minuman"></div>
+</div>
+
+<!-- Keranjang -->
+<div class="cart-box">
+  <h4><i class="bi bi-cart-fill text-success"></i> Keranjang Pesanan</h4>
+  <ul id="cart-list" class="list-group mb-3"></ul>
+  <p><strong>Total: Rp<span id="cart-total">0</span></strong></p>
+</div>
+
+<!-- Tombol Lanjut ke Pembayaran -->
+<div class="container text-center my-4">
+  <button onclick="showPayment()" class="btn btn-success">Lanjut ke Pembayaran</button>
+</div>
+
+<!-- Modal Pembayaran -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-dark">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentLabel">Nota Pembayaran</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body" id="receipt-content">
+        <div class="mb-3">
+          <label for="payment-method" class="form-label">Metode Pembayaran</label>
+          <select class="form-select" id="payment-method">
+            <option value="Tunai">Tunai</option>
+            <option value="Transfer">Transfer Bank</option>
+            <option value="QRIS">QRIS</option>
+          </select>
+        </div>
+        <div id="receipt-details"></div>
+        <div id="rekening-info" class="mt-3" style="display: none;">
+          <p><strong>No Rekening:</strong> 1234567890 (BCA a.n. Pak Tri)</p>
+        </div>
+        <div id="qris-info" class="mt-3 text-center" style="display: none;">
+          <p><strong>Silakan Scan QRIS Berikut:</strong></p>
+          <img src="images/qris.png" alt="QRIS" style="max-width: 200px;" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        <button class="btn btn-primary" onclick="sendToServer()">Kirim Pesanan</button>
+        <button class="btn btn-success" onclick="downloadPDF()">Cetak Nota PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  let cart = [];
+  let allMenu = []; // simpan semua data menu
+
+  function loadMenu() {
+    fetch('get_menu.php')
+      .then(response => {
+        if (!response.ok) throw new Error("Gagal memuat menu");
+        return response.json();
+      })
+      .then(data => {
+        allMenu = data; // simpan data menu ke allMenu
+        renderFilteredMenu(); // render menu sesuai filter/search
+      })
+      .catch(error => {
+        console.error('Error memuat menu:', error);
+        document.getElementById('menu-makanan').innerHTML = '<p class="text-danger">Gagal memuat menu makanan.</p>';
+        document.getElementById('menu-minuman').innerHTML = '<p class="text-danger">Gagal memuat menu minuman.</p>';
+      });
+  }
+
+  function renderFilteredMenu() {
+    const searchText = document.getElementById('search-input').value.toLowerCase();
+    const selectedKategori = document.getElementById('kategori-filter').value;
+
+    const makananContainer = document.getElementById('menu-makanan');
+    const minumanContainer = document.getElementById('menu-minuman');
+
+    makananContainer.innerHTML = "";
+    minumanContainer.innerHTML = "";
+
+    const filteredMenu = allMenu.filter(menu => {
+      const matchesKategori = selectedKategori === "Semua" || menu.kategori === selectedKategori;
+      const matchesSearch = menu.nama_menu.toLowerCase().includes(searchText);
+      return matchesKategori && matchesSearch;
+    });
+
+    if (filteredMenu.length === 0) {
+      makananContainer.innerHTML = '<p class="text-muted">Menu tidak ditemukan.</p>';
+      minumanContainer.innerHTML = '<p class="text-muted">Menu tidak ditemukan.</p>';
+      return;
+    }
+
+    filteredMenu.forEach(menu => {
+      const isOutOfStock = menu.stok <= 0;
+      const card = `
+        <div class="col-md-4 col-sm-6 mb-4">
+          <div class="card card-menu h-100 position-relative">
+            <img src="images/${menu.gambar}" class="menu-img" alt="${menu.nama_menu}" />
+            ${isOutOfStock ? `<span class="badge bg-danger position-absolute top-0 start-0 m-2">Stok Habis</span>` : ""}
+            <div class="card-body text-center text-dark">
+              <h5 class="card-title">${menu.nama_menu}</h5>
+              <p class="card-text">Rp${menu.harga.toLocaleString()}</p>
+              <p class="card-text">Stok: ${menu.stok}</p>
+              <button class="btn btn-success" ${isOutOfStock ? "disabled" : ""} onclick="addToCart('${menu.nama_menu}', ${menu.harga}, ${menu.stok})">
+                Pesan
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      if (menu.kategori === "Makanan") {
+        makananContainer.innerHTML += card;
+      } else if (menu.kategori === "Minuman") {
+        minumanContainer.innerHTML += card;
+      }
+    });
+  }
+
+  function addToCart(name, price, stok) {
+    const index = cart.findIndex(item => item.name === name);
+    if (index !== -1) {
+      if (cart[index].qty + 1 > stok) return alert('Stok tidak cukup!');
+      cart[index].qty += 1;
+    } else {
+      if (stok < 1) return alert('Stok kosong!');
+      cart.push({ name, price, qty: 1, stok });
+    }
+    renderCart();
+  }
+
+  function renderCart() {
+    const list = document.getElementById('cart-list');
+    const totalEl = document.getElementById('cart-total');
+    list.innerHTML = "";
+    let total = 0;
+    cart.forEach((item, i) => {
+      total += item.price * item.qty;
+      list.innerHTML += `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          ${item.name} x${item.qty} - Rp${(item.price * item.qty).toLocaleString()}
+          <button class="btn btn-sm btn-danger" onclick="removeFromCart(${i})">x</button>
+        </li>
+      `;
+    });
+    totalEl.textContent = total.toLocaleString();
+  }
+
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    renderCart();
+  }
+
+  // Show payment modal
+  function showPayment() {
+    if (cart.length === 0) return alert("Keranjang kosong, silakan pesan terlebih dahulu.");
+
+    const receiptDetails = document.getElementById('receipt-details');
+    let html = '<ul class="list-group">';
+    let total = 0;
+    cart.forEach(item => {
+      html += `<li class="list-group-item">${item.name} x${item.qty} - Rp${(item.price * item.qty).toLocaleString()}</li>`;
+      total += item.price * item.qty;
+    });
+    html += `<li class="list-group-item active">Total: Rp${total.toLocaleString()}</li></ul>`;
+    receiptDetails.innerHTML = html;
+
+    // Tampilkan modal
+    const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+    paymentModal.show();
+
+    // Sembunyikan info rekening dan QRIS
+    document.getElementById('rekening-info').style.display = 'none';
+    document.getElementById('qris-info').style.display = 'none';
+  }
+
+  // Ubah tampilan metode pembayaran
+  document.getElementById('payment-method').addEventListener('change', (e) => {
+    const metode = e.target.value;
+    document.getElementById('rekening-info').style.display = metode === 'Transfer' ? 'block' : 'none';
+    document.getElementById('qris-info').style.display = metode === 'QRIS' ? 'block' : 'none';
+  });
+
+  // Kirim pesanan ke server (contoh dummy)
+  function sendToServer() {
+  if (cart.length === 0) {
+    alert("Keranjang kosong.");
+    return;
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const metode = document.getElementById('payment-method').value;
+
+  fetch("total_penghasilan.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      cart: cart,
+      total: total,
+      metode: metode
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      alert("Pesanan terkirim!");
+    } else {
+      alert("Gagal mengirim: " + (data.message || "Data tidak lengkap"));
+    }
+
+    cart = [];
+    renderCart();
+    const modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+    modal.hide();
+  })
+  .catch(err => {
+    console.error("Gagal kirim:", err);
+    alert("Terjadi kesalahan saat mengirim pesanan.");
+  });
+}
+
+
+  // Fungsi cetak PDF nota
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    let y = 10;
+    doc.setFontSize(18);
+    doc.text("Nota Pembayaran MIAGO", 10, y);
+    y += 10;
+
+    cart.forEach(item => {
+      const line = `${item.name} x${item.qty} - Rp${(item.price * item.qty).toLocaleString()}`;
+      doc.setFontSize(14);
+      doc.text(line, 10, y);
+      y += 10;
+    });
+
+    let total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    y += 5;
+    doc.setFontSize(16);
+    doc.text(`Total: Rp${total.toLocaleString()}`, 10, y);
+
+    doc.save("nota-miago.pdf");
+  }
+
+  // Muat menu saat halaman selesai dimuat
+  window.addEventListener('DOMContentLoaded', loadMenu);
+</script>
+
+</body>
+</html>
